@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HaloBot 灵灵运营管理后台 · 原型</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="course-editor.css" />
+  <link rel="stylesheet" href="functionality.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">H</div><div><strong>HaloBot 灵灵</strong><small>运营管理后台</small></div></div>
+      <nav id="mainNav">
+        <button data-page="dashboard"><span>▦</span>数据看板</button>
+        <button><span>⇥</span>登录管理</button>
+        <button><span>♙</span>人员账号权限管理 <i>›</i></button>
+        <button><span>◇</span>客户管理 <i>›</i></button>
+        <button><span>▣</span>广告管理 <i>›</i></button>
+        <button><span>⌁</span>标签管理 <i>›</i></button>
+        <button><span>▤</span>设备管理</button>
+        <button><span>⌘</span>服务包套餐管理</button>
+        <div class="nav-group open">
+          <button class="active group-title"><span>▧</span>培训考试管理 <i>⌄</i></button>
+          <div class="subnav">
+            <button class="active" data-page="projects">培训项目</button>
+            <button data-page="courses">课程内容</button>
+            <button data-page="questions">题库管理</button>
+            <button data-page="exams">考试管理</button>
+            <button data-page="records">学习与成绩</button>
+          </div>
+        </div>
+        <button><span>▥</span>订单管理 <i>›</i></button>
+        <button><span>↥</span>版本管理 <i>›</i></button>
+      </nav>
+      <div class="profile"><div class="avatar">超</div><div><b>华瓴超级管理员</b><small>13800000000</small></div></div>
+    </aside>
+    <section class="shell">
+      <header><div class="crumb">HaloBot 灵灵运营后台 <b>/</b> <span id="crumb">培训考试管理 / 培训项目</span></div><div class="header-right"><span id="clock"></span><button class="icon-btn">◉</button><div class="user"><span class="mini-avatar">超</span><div><b>超级管理员</b><small>华瓴超级管理员</small></div><em>⌄</em></div></div></header>
+      <main id="content"></main>
+    </section>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div class="modal-mask" id="modal"><div class="modal"><div class="modal-head"><h3 id="modalTitle"></h3><button id="closeModal">×</button></div><div id="modalBody"></div></div></div>
+  <script src="app.js"></script>
+</body>
+</html>

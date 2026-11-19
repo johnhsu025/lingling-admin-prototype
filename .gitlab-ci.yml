@@ -1,0 +1,14 @@
+stages:
+  - deploy
+
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp index.html app.js styles.css course-editor.css functionality.css public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+
