@@ -79,3 +79,65 @@ if(localStorage.getItem('gsk-drug-bank-v1')!=='1'){
   db.questions=db.questions.filter(q=>q.bank!=='GSK 产品知识题库').concat(drugQuestions.map((q,i)=>({...q,id:oldIds[i]??Date.now()+i,bank:'GSK 产品知识题库',score:5})));
   localStorage.setItem('gsk-drug-bank-v1','1');persist()
 }
+
+if(localStorage.getItem('respiratory-inhaler-courses-v2')!=='1'){
+  let respiratoryCourses=[
+    {name:'哮喘与慢阻肺吸入治疗基础',minutes:18,status:'已发布',chapters:[
+      {title:'认识哮喘与慢阻肺',type:'图文',content:'了解哮喘与慢阻肺的常见症状、气道特点，以及规范长期管理的重要性。'},
+      {title:'吸入给药的基本原则',type:'视频',content:'吸入治疗基础与装置选择.mp4'}
+    ]},
+    {name:'定量气雾吸入器（pMDI）规范使用',minutes:16,status:'已发布',chapters:[
+      {title:'标准操作步骤',type:'视频',content:'pMDI规范使用演示.mp4'},
+      {title:'储雾罐配合使用',type:'图文',content:'讲解摇匀、呼气、含紧吸嘴、按压同步缓慢深吸气、屏气及储雾罐的使用要点。'},
+      {title:'常见错误纠正',type:'图文',content:'避免未摇匀、按压与吸气不同步、吸气过快、未屏气和连续多次喷药等错误。'}
+    ]},
+    {name:'干粉吸入器（DPI）规范使用',minutes:17,status:'已发布',chapters:[
+      {title:'装置准备与剂量装载',type:'视频',content:'DPI装置准备与剂量装载.mp4'},
+      {title:'正确吸入方法',type:'图文',content:'装载剂量后先远离装置充分呼气，再快速、有力、深吸气并按要求屏气。'},
+      {title:'装置保存与清洁',type:'图文',content:'保持吸嘴干燥，避免向装置内呼气，并依据说明书完成清洁和剩余剂量检查。'}
+    ]},
+    {name:'软雾吸入器（SMI）规范使用',minutes:15,status:'已发布',chapters:[
+      {title:'装置初始化与准备',type:'视频',content:'SMI初始化与规范使用.mp4'},
+      {title:'缓慢深吸气配合',type:'图文',content:'按装置要求旋转、打开和按压，同时缓慢、持续、深吸气，完成后屏气。'},
+      {title:'日常维护',type:'图文',content:'定期擦拭吸嘴，观察剂量指示，并按产品说明完成药筒更换和装置维护。'}
+    ]},
+    {name:'雾化吸入器操作、清洁与患者指导',minutes:20,status:'草稿',chapters:[
+      {title:'雾化装置组装与操作',type:'视频',content:'雾化器规范操作演示.mp4'},
+      {title:'清洁消毒与干燥保存',type:'图文',content:'按说明书拆卸可清洁部件，完成清洗、消毒、充分干燥和规范保存，避免交叉使用。'},
+      {title:'患者使用指导与观察',type:'图文',content:'指导患者保持合适体位和平稳呼吸，关注不适反应；药品选择和用量应遵循处方及专业人员指导。'}
+    ]}
+  ],nextId=Math.max(0,...db.courses.map(c=>c.id))+1,added=[];
+  respiratoryCourses.forEach(course=>{
+    let existing=db.courses.find(c=>c.name===course.name);
+    if(existing)added.push(existing.id);
+    else{let item={...course,id:nextId++,projectId:1};db.courses.push(item);added.push(item.id)}
+  });
+  let project=db.projects.find(p=>p.id===1);
+  if(project)project.courseIds=[...new Set([...(project.courseIds||[]),...added])];
+  localStorage.setItem('respiratory-inhaler-courses-v2','1');persist()
+}
+
+if(localStorage.getItem('respiratory-inhaler-questions-v1')!=='1'){
+  let respiratoryQuestions=[
+    {stem:'使用定量气雾吸入器（pMDI）时，吸气方式通常应如何配合装置按压？',type:'单选题',point:'pMDI操作',difficulty:'中等',options:['缓慢、持续、深吸气并与按压协调','快速浅吸气且无需协调','先屏气再按压装置','仅用鼻吸气'],answer:['A'],analysis:'pMDI通常需要按压与缓慢、持续、深吸气相配合，吸入后按要求屏气。'},
+    {stem:'患者难以协调pMDI按压和吸气时，较合适的处理方式是什么？',type:'单选题',point:'pMDI操作',difficulty:'简单',options:['提供操作训练并评估是否使用储雾罐','让患者连续快速按压多次','取消所有吸入治疗','要求患者向装置内呼气'],answer:['A'],analysis:'应先进行演示和训练；储雾罐可降低按压与吸气协调难度，但仍应遵循具体装置说明。'},
+    {stem:'干粉吸入器（DPI）释放药物通常需要哪种吸气方式？',type:'单选题',point:'DPI操作',difficulty:'简单',options:['快速、有力、深吸气','缓慢浅吸气','仅用鼻吸气','完全不吸气'],answer:['A'],analysis:'DPI依赖患者产生足够的吸气流量使粉末分散，因此通常需要快速、有力、深吸气。'},
+    {stem:'使用DPI前进行呼气时，正确做法是什么？',type:'单选题',point:'DPI操作',difficulty:'简单',options:['远离吸嘴充分呼气','对着吸嘴用力呼气','含住吸嘴后反复呼气','省略呼气步骤'],answer:['A'],analysis:'应远离装置呼气，避免湿气进入DPI而影响粉末和剂量。'},
+    {stem:'DPI吸嘴通常应保持干燥，并按照具体装置说明进行清洁。',type:'判断题',point:'装置清洁',difficulty:'简单',options:['正确','错误'],answer:['A'],analysis:'DPI通常需要保持干燥，清洁方式以产品说明书为准，不能擅自用水冲洗。'},
+    {stem:'软雾吸入器（SMI）使用时，较合适的吸气方式是什么？',type:'单选题',point:'SMI操作',difficulty:'中等',options:['按压时缓慢、持续、深吸气','快速短促吸气','仅在按压后呼气','无需含紧吸嘴'],answer:['A'],analysis:'SMI通常需要在释放药物时缓慢、持续、深吸气，并按要求屏气。'},
+    {stem:'吸入含糖皮质激素的药物后，通常应进行哪项处理？',type:'单选题',point:'用药后处理',difficulty:'简单',options:['用清水漱口后吐出','立即平躺休息','马上再吸入一次','用水冲洗整个DPI内部'],answer:['A'],analysis:'吸入含糖皮质激素后漱口并吐出，有助于降低口咽部不良反应风险。'},
+    {stem:'选择吸入装置时，应综合考虑哪些患者因素？',type:'多选题',point:'装置选择',difficulty:'中等',options:['吸气流量和协调能力','手部操作能力','认知与学习能力','包装颜色偏好'],answer:['A','B','C'],analysis:'装置选择需结合吸气流量、协调和手部操作能力、认知情况、偏好及装置可及性等因素。'},
+    {stem:'为了确保患者持续正确使用吸入装置，较合适的做法是什么？',type:'单选题',point:'患者教育',difficulty:'简单',options:['定期复核操作并让患者现场演示','只在首次发药时口头说明','仅发放说明书无需演示','出现问题后直接更换所有装置'],answer:['A'],analysis:'应演示正确方法，并采用回示法让患者操作；后续随访中还需定期复核。'},
+    {stem:'下列哪些属于吸入装置使用中的常见关键错误？',type:'多选题',point:'常见错误',difficulty:'中等',options:['吸气流量不合适','吸气前未正确呼气','吸入后未按要求屏气','按说明书检查剩余剂量'],answer:['A','B','C'],analysis:'吸气流量、吸入前呼气、按压协调和吸入后屏气等环节均是常见错误点。'},
+    {stem:'雾化器的主要作用方式是什么？',type:'单选题',point:'雾化操作',difficulty:'简单',options:['将药液转化为可吸入的细雾','把药物制成口服片剂','直接测量肺功能','替代所有处方药物'],answer:['A'],analysis:'雾化器将药液形成细雾，通过面罩或咬嘴供患者吸入。'},
+    {stem:'雾化结束后的正确处理通常包括哪些内容？',type:'多选题',point:'雾化清洁',difficulty:'中等',options:['按说明书拆洗可清洁部件','充分干燥后保存','避免多人共用个人部件','将残余药液长期留在药杯内'],answer:['A','B','C'],analysis:'雾化部件应按说明书清洁、消毒和干燥保存，个人使用部件不应随意共用。'},
+    {stem:'哮喘控制不佳时，在判断当前治疗无效前应先关注什么？',type:'单选题',point:'哮喘管理',difficulty:'中等',options:['吸入技术和治疗依从性','直接停用全部药物','仅更换装置颜色','自行增加所有药物剂量'],answer:['A'],analysis:'指南强调在调整治疗前评估吸入技术和依从性，排查可纠正的问题。'},
+    {stem:'慢阻肺患者的吸入装置应根据患者能力和偏好进行个体化选择。',type:'判断题',point:'慢阻肺管理',difficulty:'简单',options:['正确','错误'],answer:['A'],analysis:'装置选择应考虑患者吸气能力、协调性、手部操作能力、认知、偏好和可及性。'},
+    {stem:'使用带储雾罐的pMDI时，每次按压后较合适的操作是什么？',type:'单选题',point:'储雾罐使用',difficulty:'中等',options:['按装置指导完成一次缓慢吸入或规定次数的潮气呼吸','连续向储雾罐喷入多剂后再吸','先对储雾罐内用力呼气','将储雾罐与吸入器分开使用'],answer:['A'],analysis:'通常应一次按压后立即按指导吸入；具体采用单次缓慢吸入或潮气呼吸应遵循装置说明和专业指导。'}
+  ],nextId=Math.max(0,...db.questions.map(q=>q.id))+1;
+  respiratoryQuestions.forEach(question=>{
+    if(!db.questions.some(q=>q.bank==='GSK 产品知识题库'&&q.stem===question.stem))db.questions.push({...question,id:nextId++,bank:'GSK 产品知识题库',score:5,status:'启用'})
+  });
+  db.questions.filter(q=>q.bank==='GSK 产品知识题库').forEach(q=>q.status='启用');
+  localStorage.setItem('respiratory-inhaler-questions-v1','1');persist()
+}
