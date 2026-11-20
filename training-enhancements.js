@@ -67,3 +67,15 @@ function questionForm(id){
 }
 
 function saveVisualQuestion(id,x){let type=val('qType'),opts=val('qOptions').split('\n').map(v=>v.trim()).filter(Boolean),ans=[...document.querySelectorAll('[name=qCorrect]:checked')].map(v=>v.value);if(!val('qBank')||!val('qStem')||!val('qPoint'))return toast('请完整填写题库、题干和知识点');if(opts.length<2)return toast('请至少填写两个选项');if(!ans.length)return toast('请选择正确答案');if(type!=='多选题'&&ans.length!==1)return toast('单选题和判断题只能选择一个正确答案');if(+val('qScore')<=0)return toast('题目分值必须大于 0');upsert('questions',{...x,id:id||Date.now(),bank:val('qBank'),type,point:val('qPoint'),difficulty:val('qDiff'),score:+val('qScore'),stem:val('qStem'),options:opts,answer:ans,analysis:val('qAnalysis'),status:val('qStatus')});closeModal();questionTab='items';render('questions');toast(id?'题目及正确答案已更新':'题目已创建')}
+
+if(localStorage.getItem('gsk-drug-bank-v1')!=='1'){
+  let oldIds=db.questions.filter(q=>q.bank==='GSK 产品知识题库').map(q=>q.id).sort((a,b)=>a-b),drugQuestions=[
+    {stem:'验收药品时，核对药品有效期的主要目的是什么？',type:'单选题',point:'药品验收',difficulty:'简单',options:['确认药品仍在有效使用期限内','判断药品零售价格','确定生产企业规模','统计店员工作量'],answer:['A'],analysis:'验收时核对有效期，可避免近效期或过期药品进入正常销售环节。',status:'启用'},
+    {stem:'药品的储存条件应优先依据哪项信息执行？',type:'单选题',point:'药品储存',difficulty:'简单',options:['药品说明书或包装标示','店员个人经验','顾客口头建议','同类商品摆放位置'],answer:['A'],analysis:'不同药品对温度、湿度和光照的要求不同，应以说明书或包装标示为准。',status:'启用'},
+    {stem:'发现药品包装破损、受潮或性状异常时，正确的处理方式是什么？',type:'单选题',point:'质量管理',difficulty:'中等',options:['立即停止销售并隔离上报','擦拭后继续销售','更换外包装后销售','降低价格促销'],answer:['A'],analysis:'疑似存在质量问题的药品应停止销售、单独隔离，并按质量管理流程上报处理。',status:'启用'},
+    {stem:'顾客咨询药品用法用量或不良反应，但店员无法确认时，应如何处理？',type:'单选题',point:'用药咨询',difficulty:'简单',options:['请药师提供专业指导','根据经验直接回答','让顾客自行增加剂量','忽略顾客问题'],answer:['A'],analysis:'涉及专业用药指导且无法确认时，应转交药师或其他具备资质的专业人员。',status:'启用'},
+    {stem:'药品销售或发放前通常需要核对哪些信息？',type:'多选题',point:'药品核对',difficulty:'中等',options:['药品名称和规格','生产批号与有效期','包装完整性','顾客喜欢的包装颜色'],answer:['A','B','C'],analysis:'药品销售或发放前应核对名称、规格、批号、有效期及包装质量等关键信息。',status:'草稿'}
+  ];
+  db.questions=db.questions.filter(q=>q.bank!=='GSK 产品知识题库').concat(drugQuestions.map((q,i)=>({...q,id:oldIds[i]??Date.now()+i,bank:'GSK 产品知识题库',score:5})));
+  localStorage.setItem('gsk-drug-bank-v1','1');persist()
+}
